@@ -20,3 +20,20 @@ Converts it to MP3 via yt-dlp + ffmpeg
 Lets users instantly download from browser
 
 Stores download logs for analytics
+
+🏗️ System Architecture
+┌────────────────────────┐
+│ 🎨 React (Vite) UI    │ → Handles user input & progress
+│ ⚡ Tailwind + Axios    │
+└──────────┬─────────────┘
+           │ REST API
+┌──────────▼─────────────┐
+│ 🧠 Django + DRF Backend│ → Validates, triggers Celery task
+│ ⚙️ Celery Worker + Redis│ → Runs yt-dlp + ffmpeg
+└──────────┬─────────────┘
+           │
+      Stores Output
+           │
+    ┌──────▼──────┐
+    │ 💾 Media/S3 │ → Serves MP3 file via secure link
+    └─────────────┘

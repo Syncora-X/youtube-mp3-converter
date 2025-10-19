@@ -24,7 +24,7 @@ Stores download logs for analytics
 # 🏗️ System Architecture
 | **Component**                | **Technology / Tool**                              | **Description**                                                | **Responsibility**                                                 |
 | ---------------------------- | -------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 🎯 **Frontend (UI)**         | **Flask (Jinja2 Templates) + HTML + Tailwind CSS** | Lightweight frontend interface integrated with Flask templates | Displays YouTube input form, download status, and result           |
+| 🎯 **Frontend (UI)**         | **React JS + Tailwind CSS**                        | Lightweight frontend interface integrated with React JS        | Displays YouTube input form, download status, and result           |
 | ⚙️ **Backend Logic**         | **Python (Flask)**                                 | Core logic layer handling requests and responses               | Processes YouTube URL, triggers audio download, and returns status |
 | 🧠 **Downloader Engine**     | **yt-dlp**                                         | High-performance YouTube downloader library                    | Extracts metadata and downloads MP3/audio from YouTube videos      |
 | 💾 **File Handling**         | **OS + Pathlib + Temporary Storage**               | Manages downloaded MP3 files and cleanup                       | Ensures proper file saving and cleanup after download              |

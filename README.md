@@ -208,10 +208,10 @@ Merge after approval
 | Q2 2026 | 📊 Dashboard + Analytics         |
 | Q3 2026 | 📱 Mobile-First PWA Version      |
 
-## 🪄 Maintainers
-Syncora X Engineering Team
+# 🪄 Maintainers
+# Syncora X Engineering Team
 
-# 👨‍💻 Lead Mentor: Ashan Mir
+ 👨‍💻 Lead Mentor: Ashan Mir
 
 👩‍💻 Junior Developers: Batch 2025 – Full Stack Interns
 

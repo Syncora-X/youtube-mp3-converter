@@ -18,13 +18,16 @@ It trains members to build and deploy **production-grade full-stack systems** wi
 
 - 🧩 Asynchronous background processing  
 - ⚙️ Clean REST APIs  
-- 💅 Modern, reactive UI  
+- 💅 Modern, reactive front-end architecture  
 
-### 🎯 Primary Objective
+---
+
+## 🎯 Primary Objective
+
 Build a **YouTube → MP3 Converter** that:
 - Accepts a YouTube URL  
-- Converts it to MP3 via `yt-dlp` + `ffmpeg`  
-- Lets users instantly download from browser  
+- Converts it to MP3 using `yt-dlp` + `ffmpeg`  
+- Lets users instantly download from the browser  
 - Stores download logs for analytics  
 
 ---
@@ -34,37 +37,41 @@ Build a **YouTube → MP3 Converter** that:
 ┌────────────────────────┐
 │ 🎨 React (Vite) UI │ → Handles user input & progress
 │ ⚡ Tailwind + Axios │
-└──────────┬─────────────┘
+└──────────┬──────────────┘
 │ REST API
-┌──────────▼─────────────┐
-│ 🧠 Django + DRF Backend │ → Validates, triggers Celery task
-│ ⚙️ Celery Worker + Redis│ → Runs yt-dlp + ffmpeg
-└──────────┬─────────────┘
+┌──────────▼──────────────┐
+│ 🧠 Django + DRF Backend │ → Validates & queues Celery task
+│ ⚙️ Celery Worker + Redis │ → Runs yt-dlp + ffmpeg in background
+└──────────┬──────────────┘
 │
 Stores Output
 │
 ┌──────▼──────┐
 │ 💾 Media/S3 │ → Serves MP3 file via secure link
 └─────────────┘
+
 ---
 
 ## 👩‍💻 How Junior Members Work on It
 
 ### 🧭 Team Workflow
+
 | Stage | Responsibility | Tools |
 |-------|----------------|-------|
-| 🧩 1. Clone & Setup | Fork the repo and set up local env | Git + venv |
-| 🌿 2. Feature Branch | Work on a specific module | `feature/<name>` |
+| 🧩 1. Clone & Setup | Fork repo & set up local environment | Git + venv |
+| 🌿 2. Feature Branch | Work on individual module | `feature/<name>` |
 | 🔍 3. Review | Senior review via Pull Request | GitHub PR |
-| 🔒 4. Merge | After approval only | Protected branch |
+| 🔒 4. Merge | Only after approval | Protected main branch |
 | 🚀 5. Deploy | Backend → Render, Frontend → Vercel | DevOps |
 
+---
+
 ### 🧠 Skill Targets
-- Backend (Celery + Redis + Django REST)  
-- Frontend (Vite + Tailwind + Axios)  
-- Full-stack integration  
-- Deployment workflows (Render + Vercel)  
-- Git branching & collaboration  
+- Backend: Django REST, Celery, Redis  
+- Frontend: React (Vite), Tailwind, Axios  
+- Full-stack Integration & API communication  
+- Deployment (Render + Vercel)  
+- Git branching, PRs & collaboration  
 
 ---
 
@@ -78,15 +85,19 @@ Stores Output
 git clone https://github.com/Syncora-X/youtube-mp3-converter.git
 cd youtube-mp3-converter/backend
 python -m venv venv
-# Activate venv
-# Windows:
-.\venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-pip install -r requirements.txt
-2️⃣ Environment Variables
 
-Create .env inside /backend:
+Activate the virtual environment:
+# Windows
+.\venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
+
+Then install dependencies:
+pip install -r requirements.txt
+
+2️⃣ Create Environment Variables
+
+Create a .env file inside /backend:
 
 SECRET_KEY=syncora-x-secret
 DEBUG=True
@@ -94,10 +105,11 @@ DATABASE_URL=sqlite:///db.sqlite3
 REDIS_URL=redis://127.0.0.1:6379/0
 ALLOWED_HOSTS=localhost,127.0.0.1
 
+
 3️⃣ Run Redis
 docker run -d -p 6379:6379 redis
 
-4️⃣ Start Celery & Django
+4️⃣ Start Celery & Django Server
 celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
 python manage.py runserver
 
@@ -107,120 +119,3 @@ npm install
 VITE_API_URL=http://127.0.0.1:8000/api npm run dev
 
 </details>
-
-🚀 Deployment Guide
-<details> <summary>🖥️ <b>Backend → Render</b></summary>
-
-Connect GitHub repo → New Web Service
-
-Build Command:
-
-pip install -r requirements.txt
-
-
-Start Command:
-
-gunicorn youtube_mp3_backend.wsgi:application
-
-
-Add Environment Variables:
-
-SECRET_KEY, REDIS_URL, DATABASE_URL, ALLOWED_HOSTS
-
-
-Create Background Worker:
-
-celery -A youtube_mp3_backend.celery worker --loglevel=info
-
-</details> <details> <summary>🌐 <b>Frontend → Vercel</b></summary>
-
-Select /frontend directory
-
-Build Command: npm run build
-
-Output Directory: dist
-
-Add:
-
-VITE_API_URL=https://your-backend.onrender.com/api
-
-</details>
-⚡ Environment Variables Reference
-| Variable        | Description       | Example                         |
-| --------------- | ----------------- | ------------------------------- |
-| `SECRET_KEY`    | Django secret key | `syncora-x-secret`              |
-| `DEBUG`         | Dev mode          | `True`                          |
-| `DATABASE_URL`  | DB connection     | `sqlite:///db.sqlite3`          |
-| `REDIS_URL`     | Celery broker     | `redis://localhost:6379/0`      |
-| `ALLOWED_HOSTS` | Domains           | `localhost,127.0.0.1`           |
-| `VITE_API_URL`  | API endpoint      | `https://api.syncora-x.com/api` |
-
-
-💾 File Download Mechanism
-
-🎵 After Celery finishes, MP3 is saved in media/downloads/
-📁 API endpoint /api/download/<id>/file/ sends file with Content-Disposition: attachment
-➡️ Browser triggers Chrome-style download popup
-
-🧩 Future Development Roadmap
-
-| Phase      | Focus     | Features                                  |
-| ---------- | --------- | ----------------------------------------- |
-| 🧱 Phase 2 | UI & UX   | Progress bar, download history, dark mode |
-| ⚙️ Phase 3 | Backend   | JWT auth, S3 storage, WebSockets          |
-| 📊 Phase 4 | Analytics | Charts, stats, dashboard for metrics      |
-
-
-🧠 Learning Outcomes
-| Area     | Skill Developed                           |
-| -------- | ----------------------------------------- |
-| Backend  | Django REST API + Celery async processing |
-| Frontend | React (Vite + Tailwind), API integration  |
-| DevOps   | Render/Vercel CI deployment               |
-| Team     | GitHub workflow & code review             |
-| Product  | Full-stack architecture understanding     |
-
-🛡️ Legal & Ethical Note
-
-⚠️ This project is for educational purposes only under the Syncora X internal training program.
-Members must respect YouTube Terms of Service and copyright laws.
-Do not distribute or use this tool for unauthorized downloads.
-
-🤝 Contributing (Syncora X Members)
-
-Fork this repository
-
-Create a new branch: feature/<yourname>
-
-Commit descriptive messages
-
-Open a Pull Request for mentor review
-
-Merge after approval
-
-🧭 Roadmap Summary
-| Quarter | Milestone                        |
-| ------- | -------------------------------- |
-| Q4 2025 | 🎨 UI Upgrade + Download History |
-| Q1 2026 | 🔐 Auth + S3 Integration         |
-| Q2 2026 | 📊 Dashboard + Analytics         |
-| Q3 2026 | 📱 Mobile-First PWA Version      |
-
-🪄 Maintainers
-
-Syncora X Engineering Team
-
-👨‍💻 Lead Mentor: Ashan Mir
-
-👩‍💻 Junior Developers: Batch 2025 – Full Stack Interns
-
-📧 Contact: support@syncora-x.com
-
-🌐 Website: https://syncora-x.com
-
-📜 License
-
-© 2025 Syncora X. All Rights Reserved.
-Licensed under the Syncora X Open Training License — for educational and internal demonstration only.
-
-

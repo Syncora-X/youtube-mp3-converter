@@ -63,8 +63,9 @@ python -m venv venv
 ### Activate venv
 
 #### Windows:
+```bash
 .\venv\Scripts\activate
-
+```
 #### macOS/Linux:
 source venv/bin/activate
 ```bash
@@ -90,12 +91,12 @@ docker run -d -p 6379:6379 redis
 
 ## 4️⃣ Start Celery & Django
 
-# Terminal 1 - Celery Worker
+#### Terminal 1 - Celery Worker
 ```bash
 celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
 ```
 
-# Terminal 2 - Django Server
+#### Terminal 2 - Django Server
 ```bash
 python manage.py migrate
 python manage.py runserver
@@ -153,13 +154,15 @@ VITE_API_URL=https://your-backend.onrender.com/api
 ```
 
 ## ⚡ Environment Variables Reference
-Variable	Description	Example
-SECRET_KEY	Django secret key	syncora-x-secret
-DEBUG	Dev mode	True
-DATABASE_URL	DB connection	sqlite:///db.sqlite3
-REDIS_URL	Celery broker	redis://localhost:6379/0
-ALLOWED_HOSTS	Domains	localhost,127.0.0.1
-VITE_API_URL	API endpoint	https://api.syncora-x.com/api
+| Variable        | Description           | Example                         |
+| --------------- | --------------------- | ------------------------------- |
+| `SECRET_KEY`    | Django secret key     | `syncora-x-secret`              |
+| `DEBUG`         | Development mode flag | `True`                          |
+| `DATABASE_URL`  | DB connection         | `sqlite:///db.sqlite3`          |
+| `REDIS_URL`     | Celery broker URL     | `redis://localhost:6379/0`      |
+| `ALLOWED_HOSTS` | Allowed domains       | `localhost,127.0.0.1`           |
+| `VITE_API_URL`  | API endpoint          | `https://api.syncora-x.com/api` |
+
 ## 💾 File Download Mechanism
 🎵 After Celery finishes, MP3 is saved in media/downloads/
 
@@ -168,17 +171,22 @@ VITE_API_URL	API endpoint	https://api.syncora-x.com/api
 ➡️ Browser triggers Chrome-style download popup
 
 ## 🧩 Future Development Roadmap
-Phase	Focus	Features
-🧱 Phase 2	UI & UX	Progress bar, download history, dark mode
-⚙️ Phase 3	Backend	JWT auth, S3 storage, WebSockets
+| Phase      | Focus     | Features                              |
+| ---------- | --------- | ------------------------------------- |
+| 🧱 Phase 2 | UI & UX   | Download progress, history, dark mode |
+| ⚙️ Phase 3 | Backend   | JWT auth, S3 storage, WebSockets      |
+| 📊 Phase 4 | Analytics | Charts, dashboards, task tracking     |
+
 ### 📊 Phase 4	Analytics	Charts, stats, dashboard for metrics
 ## 🧠 Learning Outcomes
-Area	Skill Developed
-Backend	Django REST API + Celery async processing
-Frontend	React (Vite + Tailwind), API integration
-DevOps	Render/Vercel CI deployment
-Team	GitHub workflow & code review
-Product	Full-stack architecture understanding
+| Area     | Skill Developed                                   |
+| -------- | ------------------------------------------------- |
+| Backend  | Django REST + Celery async tasks                  |
+| Frontend | React (Vite + Tailwind) + API integration         |
+| DevOps   | Render & Vercel deployment                        |
+| Team     | GitHub workflow, PRs, reviews                     |
+| Product  | Architecture to deployment pipeline understanding |
+
 ## 🛡️ Legal & Ethical Note
 ⚠️ This project is for educational purposes only under the Syncora X internal training program.
 Members must respect YouTube Terms of Service and copyright laws.
@@ -196,11 +204,13 @@ Open a Pull Request for mentor review
 Merge after approval
 
 # 🧭 Roadmap Summary
-Quarter	Milestone
-Q4 2025	🎨 UI Upgrade + Download History
-Q1 2026	🔐 Auth + S3 Integration
-Q2 2026	📊 Dashboard + Analytics
-Q3 2026	📱 Mobile-First PWA Version
+| Quarter | Milestone                        |
+| ------- | -------------------------------- |
+| Q4 2025 | 🎨 UI Upgrade + Download History |
+| Q1 2026 | 🔐 Auth + S3 Integration         |
+| Q2 2026 | 📊 Dashboard + Analytics         |
+| Q3 2026 | 📱 Mobile-First PWA Version      |
+
 ## 🪄 Maintainers
 Syncora X Engineering Team
 

@@ -96,7 +96,7 @@ Then install dependencies:
 pip install -r requirements.txt
 
 ### 2️⃣ Create Environment Variables
-
+```bash
 Create a .env file inside /backend:
 
 SECRET_KEY=syncora-x-secret
@@ -107,13 +107,16 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 
 
 ### 3️⃣ Run Redis
+```bash
 docker run -d -p 6379:6379 redis
 
 ### 4️⃣ Start Celery & Django Server
+```bash
 celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
 python manage.py runserver
 
 ### 5️⃣ Run Frontend
+```bash
 cd ../frontend
 npm install
 VITE_API_URL=http://127.0.0.1:8000/api npm run dev

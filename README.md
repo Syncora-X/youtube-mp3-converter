@@ -34,7 +34,6 @@ Stores download logs for analytics
 | 🧩 **Dependency Management** | **requirements.txt + pip**                         | Handles Python library installation                            | Keeps environment consistent across all developers                 |
 | 🧑‍💻 **Team Workflow**      | **Syncora X Junior Members**                       | Guided by mentors and senior developers                        | Learn Flask, Python, Git, and deployment through real practice     |
 
-    └─────────────┘
 
 # 🧠 Skill Targets
 Backend (Celery + Redis + Django REST)

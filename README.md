@@ -49,27 +49,27 @@ Deployment workflows (Render + Vercel)
 
 Git branching & collaboration
 
-⚙️ Setup & Run Locally
+# ⚙️ Setup & Run Locally
 
 🪄 Step-by-Step Setup
 
-# 1️⃣ Clone & Install
+### 1️⃣ Clone & Install
 bash
 git clone https://github.com/Syncora-X/youtube-mp3-converter.git
 cd youtube-mp3-converter/backend
 python -m venv venv
 
-## Activate venv
+### Activate venv
 
-# Windows:
+#### Windows:
 .\venv\Scripts\activate
 
-# macOS/Linux:
+#### macOS/Linux:
 source venv/bin/activate
-
+```bash
 pip install -r requirements.txt
 
-# 2️⃣ Environment Variables
+### 2️⃣ Environment Variables
 Create .env inside /backend:
 
 env
@@ -78,29 +78,31 @@ DEBUG=True
 DATABASE_URL=sqlite:///db.sqlite3
 REDIS_URL=redis://127.0.0.1:6379/0
 ALLOWED_HOSTS=localhost,127.0.0.1
-# 3️⃣ Run Redis
+## 3️⃣ Run Redis
 bash
 docker run -d -p 6379:6379 redis
-# 4️⃣ Start Celery & Django
+## 4️⃣ Start Celery & Django
 bash
 # Terminal 1 - Celery Worker
+```bash
 celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
 
 # Terminal 2 - Django Server
+```bash
 python manage.py migrate
 python manage.py runserver
-# 5️⃣ Run Frontend
+## 5️⃣ Run Frontend
 bash
 cd ../frontend
 npm install
 VITE_API_URL=http://127.0.0.1:8000/api npm run dev
-# 🚀 Deployment Guide
+### 🚀 Deployment Guide
 🖥️ Backend → Render
 Connect GitHub repo → New Web Service
 
 Build Command:
 
-bash
+```bash
 pip install -r requirements.txt
 Start Command:
 

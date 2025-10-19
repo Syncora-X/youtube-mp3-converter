@@ -51,13 +51,14 @@ Git branching & collaboration
 
 # ⚙️ Setup & Run Locally
 
-🪄 Step-by-Step Setup
+## 🪄 Step-by-Step Setup
 
-### 1️⃣ Clone & Install
-bash
+#### 1️⃣ Clone & Install
+```bash
 git clone https://github.com/Syncora-X/youtube-mp3-converter.git
 cd youtube-mp3-converter/backend
 python -m venv venv
+```
 
 ### Activate venv
 

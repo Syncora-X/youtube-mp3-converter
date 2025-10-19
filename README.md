@@ -1,336 +1,214 @@
-YouTube → MP3 Converter
+🧠 Syncora X | YouTube → MP3 Converter
 
-Full-stack starter (Django REST + Celery + yt-dlp + React(Vite) + Tailwind)
+Full-Stack Learning Project for Syncora X Junior Members
+React (Vite + Tailwind) × Django REST + Celery × yt-dlp × Redis × Render / Vercel Deployment
 
-A complete from-scratch project that lets users paste a YouTube link, converts the video to MP3 on the server, stores the MP3, and provides a download link. This README explains project architecture, local development, production deploy (Render for backend, Vercel for frontend), environment variables, troubleshooting, and extra production notes.
+📘 Overview
 
-Table of contents
+This project is part of Syncora X’s internal learning program for junior engineers.
+The goal is to teach our members how to build, structure, and deploy production-grade full-stack systems with asynchronous background processing, clean REST APIs, and modern front-end architecture.
 
-Project overview & architecture
+🧩 Primary Objective
+Build a real-world YouTube-to-MP3 converter web app that:
 
-What’s included
+Accepts a YouTube URL
 
-Quick local setup (dev)
+Converts it to MP3 on the server using yt-dlp + ffmpeg
 
-How the API works (endpoints & flow)
+Lets users download the file directly via browser
 
-Production deployment overview
+Stores download logs for future analytics
 
-Deploy backend to Render (recommended)
+ ┌───────────────────────┐
+ │   React (Vite) UI     │  →  Handles user input & progress
+ │   Tailwind + Axios    │
+ └──────────┬────────────┘
+            │ REST API
+ ┌──────────▼────────────┐
+ │ Django + DRF Backend  │  →  Validates request, queues Celery task
+ │ Celery Worker + Redis │  →  Runs yt-dlp + ffmpeg in background
+ └──────────┬────────────┘
+            │
+        Stores output
+            │
+     ┌──────▼──────┐
+     │ Media / S3  │  →  Serves MP3 file via secure link
+     └─────────────┘
 
-Deploy frontend to Vercel
+🧑‍💻 How Junior Members Work on It
+🔹 Team Workflow
 
-Environment variables
-
-Media storage & serving options
-
-Security & legal considerations
-
-Troubleshooting & common errors
-
-Next improvements / roadmap
-
-License
-
-Project overview & architecture
-Client (React + Vite/Tailwind)
-  ↕ axios
-Backend (Django + DRF)
-  ↳ REST endpoints
-  ↳ Celery tasks (yt-dlp + ffmpeg) -----> Redis (broker)
-  ↳ Saves MP3 files to /media/downloads or S3
-Database (Postgres) - stores users + download history
+| Stage             | Responsibility                                           | Tools                        |
+| ----------------- | -------------------------------------------------------- | ---------------------------- |
+| 1. Clone & Setup  | Each member forks the repo and sets up local environment | Git + Virtual Env            |
+| 2. Feature Branch | Work on individual module (API, UI, Celery worker, etc.) | Branching (`feature/<name>`) |
+| 3. Review         | Senior review via Pull Request                           | GitHub PR + Code Review      |
+| 4. Merge          | Only after approval                                      | Protected main branch        |
+| 5. Deploy         | Backend → Render, Frontend → Vercel                      | DevOps training              |
 
 
-Flow when user requests a conversion:
+🔹 Skill Targets
 
-User pastes YouTube URL in React UI and clicks Convert.
+Backend (API design, Celery async tasks, Redis integration)
 
-Frontend POSTs to Django API /api/download/.
+Frontend (Vite + Tailwind + Axios calls + state handling)
 
-Django creates a Download DB entry (optional) and enqueues a Celery task.
+Full-stack integration (CORS, async file downloads)
 
-Celery worker runs yt-dlp + ffmpeg to download & convert. File saved to media/downloads/ (or S3).
+Cloud deployment (Render / Vercel)
 
-Frontend polls or is notified; when ready user requests /api/downloads/<id>/file/ to stream/force-download the MP3.
+GitHub workflow & version control best practices
 
-What’s included
-
-Backend: Django + Django REST Framework
-
-Async Worker: Celery (Redis broker)
-
-Downloader: yt-dlp + ffmpeg (local conversion)
-
-Frontend: React (Vite) + TailwindCSS — minimal UI for URL input and history
-
-Dockerfile & docker-compose (starter) — optional
-
-Example requirements.txt and .gitignore included in repo
-
-Quick local setup (dev)
-
-These are the steps to run everything locally on Windows / macOS / Linux. Use PowerShell / terminal.
-
-Prereqs
-
-Python 3.10+
-
-Node 18+ and npm
-
-ffmpeg installed on your machine (or included in Docker)
-
-Redis (local) or Docker (recommended)
-
-yt-dlp (installed into Python venv via requirements)
-
-1) Clone & venv
-git clone https://github.com/<your-user>/youtube-mp3-converter.git
+⚙️ Setup & Run Locally
+1️⃣ Clone & Install
+git clone https://github.com/Syncora-X/youtube-mp3-converter.git
 cd youtube-mp3-converter/backend
 python -m venv venv
-# Windows
+# Activate venv
+# Windows:
 .\venv\Scripts\activate
-# macOS / Linux
+# macOS/Linux:
 source venv/bin/activate
 pip install -r requirements.txt
 
-2) Configure env
+2️⃣ Environment Variables
 
-Create backend/.env or set env vars. Minimum for local dev (SQLite + Redis on localhost):
+Create .env in backend/:
 
-SECRET_KEY=dev-secret
+SECRET_KEY=syncora-x-secret
 DEBUG=True
 DATABASE_URL=sqlite:///db.sqlite3
 REDIS_URL=redis://127.0.0.1:6379/0
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-
-If you prefer sqlite, use DATABASES setup in settings.py as provided.
-
-3) Start Redis
-
-On macOS/Linux if installed:
-
-redis-server
-
-
-Or with Docker:
-
+3️⃣ Run Redis
 docker run -d -p 6379:6379 redis
 
-4) Run migrations & create superuser
-cd backend
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser
-
-5) Start Celery worker (Windows note)
-
-Windows: use --pool=solo to avoid multiprocessing issues:
-
-celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
-
-
-Linux/macOS:
-
-celery -A youtube_mp3_backend.celery worker --loglevel=info
-
-6) Run Django server
+4️⃣ Start Celery & Server
+celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo  # Windows
 python manage.py runserver
 
-7) Start frontend
+5️⃣ Frontend
 cd ../frontend
 npm install
-# dev server (Vite)
 VITE_API_URL=http://127.0.0.1:8000/api npm run dev
 
+🚀 Deployment Guide
+🖥️ Backend → Render
 
-Frontend default: http://localhost:5173
-Backend default: http://127.0.0.1:8000
+Connect GitHub repo → New Web Service
 
-How the API works (endpoints & flow)
+Build Command: pip install -r requirements.txt
 
-Example endpoints from the starter:
+Start Command: gunicorn youtube_mp3_backend.wsgi:application
 
-POST /api/download/
+Add env vars (SECRET_KEY, REDIS_URL, DB URL, ALLOWED_HOSTS)
 
-Body: { "url": "<youtube_url>" }
+Create Background Worker for Celery:
 
-Response: { status: "Download started", task_id: "<celery-task-id>", url: "<original>" }
-
-This enqueues a Celery job that downloads & converts to MP3 in background.
-
-GET /api/downloads/
-
-List user’s downloads (history).
-
-GET /api/downloads/<id>/file/
-
-If task completed, returns FileResponse with Content-Disposition: attachment to force Chrome download.
-
-Note: For production you should protect endpoints (authentication) and implement rate limits.
-
-Production deployment overview
-Deploy backend to Render (recommended)
-
-You can deploy the Django app as a Docker service or as a Python service. I recommend Docker (we included a Dockerfile in /backend).
-
-Steps summary (Render dashboard):
-
-Create a new Web Service on Render → connect your GitHub repo.
-
-Use either:
-
-Docker: Render will build your Dockerfile; or
-
-Python service: set Build command pip install -r requirements.txt and Start command gunicorn youtube_mp3_backend.wsgi:application.
-
-Add environment variables in Render dashboard:
-
-SECRET_KEY, DEBUG=False, DATABASE_URL (managed Postgres), REDIS_URL (managed Redis), ALLOWED_HOSTS.
-
-Add a Background Worker (Render service) to run Celery:
-
-Command: celery -A youtube_mp3_backend.celery worker --loglevel=info
-
-Ensure Redis URL and any S3 credentials are set for this worker.
-
-For media files in production, use S3 or DigitalOcean Spaces (see Media section) — don’t rely on filesystem for multiple dynos.
-
-Notes for Render:
-
-Use managed Postgres/Redis from Render (or external providers).
-
-Ensure you expose /media/ if serving files directly (or use signed S3 URLs).
-
-Deploy frontend to Vercel
-
-Create a new Vercel project, connect GitHub repo, select frontend directory.
-
-Set Build command: npm run build (Vite).
-
-Set Output directory: dist (Vite default).
-
-In Vercel environment variables, add:
-
-VITE_API_URL=https://YOUR_BACKEND_URL/api (point to Render backend)
-
-Deploy. Vercel will serve static front-end; client will call your backend API.
-
-Environment variables
-Name	Purpose	Example
-SECRET_KEY	Django secret	a-very-secret-key
-DEBUG	Debug mode	False
-DATABASE_URL	Database connection	postgres://user:pass@host:5432/dbname
-REDIS_URL	Celery broker/result backend	redis://:password@host:6379/0
-ALLOWED_HOSTS	Comma separated hosts	example.com,api.example.com
-VITE_API_URL	Frontend → API URL (Vercel)	https://api.example.com/api
-AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION	Optional for S3 storage	—
-Media storage & serving options
-
-Local (dev)
-
-Save files under backend/downloads/ or backend/media/downloads/. Works for single-instance dev, not for multiple servers.
-
-S3 / DigitalOcean Spaces (production)
-
-Save files to S3. On job completion create a signed URL (expires) or store public object and return link.
-
-Use django-storages[boto3] and set DEFAULT_FILE_STORAGE to storages.backends.s3boto3.S3Boto3Storage.
-
-Why S3 in production?
-
-Multiple backend instances, horizontal scaling, persistence beyond ephemeral filesystem, better CDN/edge delivery.
-
-Security & legal considerations
-
-Rate limiting & authentication: Protect the API with user auth (JWT/session) and rate limit conversions per user/IP to prevent abuse.
-
-YouTube Terms of Service: Downloading content from YouTube may violate YouTube’s ToS or copyright law for certain materials. Use this tool responsibly; restrict or disallow copyrighted content or require that users only download content they own or have rights to.
-
-Resource costs: Converting many files uses CPU and disk; consider job queue limits, file size limits, and user quotas.
-
-Sanitize filenames & validate URLs to avoid directory traversal or injection issues.
-
-Troubleshooting & common errors
-
-CORS blocked by browser
-
-Install django-cors-headers and add to INSTALLED_APPS and MIDDLEWARE, then set CORS_ALLOWED_ORIGINS = ["https://your-frontend"] (or CORS_ALLOW_ALL_ORIGINS = True for dev).
-
-Celery worker failing on Windows
-
-Use --pool=solo on Windows:
-celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
-
-Or run Celery inside WSL2 / Docker / Linux server for production.
-
-psycopg2 errors
-
-Install psycopg2-binary in venv for Postgres or switch to SQLite for quick dev.
-
-yt-dlp downloading playlists instead of single video
-
-Add noplaylist=True to ydl_opts (or --no-playlist) if you want single-video behavior.
-
-Not seeing download in Chrome
-
-Server-side download saves file on server. To trigger browser download, serve the file via an endpoint with Content-Disposition: attachment and make frontend navigate to that URL or use <a download>.
-
-Permissions / file handles errors on Windows
-
-Run terminals as Administrator if you hit permission issues. Use Docker/WSL if you keep encountering handle/Semaphores errors.
-
-Next improvements / roadmap
-
-Add JWT auth & account management (signup/login)
-
-User download quotas and rate limiting
-
-Real-time progress updates via WebSockets / Server-Sent Events (SSE)
-
-S3-backed media storage + signed download URLs
-
-Job cancellation and retry support
-
-Better UI: queue status, progress bars, thumbnails
-
-Useful commands / quick cheatsheet
-
-Migrate & run dev:
-
-cd backend
-source venv/bin/activate             # or .\venv\Scripts\activate (Windows)
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-
-
-Start celery:
-
-# Linux/macOS
 celery -A youtube_mp3_backend.celery worker --loglevel=info
-# Windows (use solo pool)
-celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
+
+🌐 Frontend → Vercel
+
+Connect repo → select /frontend directory
+
+Build: npm run build
+
+Output Dir: dist
+
+Environment:
+
+VITE_API_URL=https://your-backend.onrender.com/api
 
 
-Build & serve frontend:
+| Variable      | Description             | Example                                                        |
+| ------------- | ----------------------- | -------------------------------------------------------------- |
+| SECRET_KEY    | Django secret key       | syncora-x-secret                                               |
+| DEBUG         | Dev mode flag           | False                                                          |
+| DATABASE_URL  | DB connection           | postgres://user:pass@host/db                                   |
+| REDIS_URL     | Celery broker           | redis://:password@host:6379/0                                  |
+| ALLOWED_HOSTS | Comma separated domains | youtube.syncora-x.com                                          |
+| VITE_API_URL  | Frontend API URL        | [https://api.syncora-x.com/api](https://api.syncora-x.com/api) |
 
-cd frontend
-npm install
-npm run build
-# Vite preview (production-ish)
-npm run preview
+💾 File Download Mechanism
 
+File saved in media/downloads/ after Celery finishes.
 
-Docker (if you use docker-compose):
+/api/download/<id>/file/ returns Content-Disposition: attachment, so browser forces Chrome download (like a normal website).
 
-docker-compose up --build
+🧩 Planned Future Work (For Junior Members)
+🎯 Phase 2 – Improved UI and UX
 
-README badges & showcase (optional)
+Modern download progress visualization
 
-Add CI badges, license, or demo link here (if deployed).
+Persistent download history with date, title, and size
 
-License
+Audio preview & metadata display
 
-MIT — include license file if you want to publish as open source.
+Themed Syncora X branding UI (gradient, logo, dark mode)
+
+🎯 Phase 3 – Backend Enhancements
+
+User authentication (JWT)
+
+Rate limiting per IP or account
+
+S3 storage + signed download URLs
+
+Progress notifications via WebSocket/SSE
+
+Job retry logic and error tracking (Sentry)
+
+🎯 Phase 4 – Analytics and Insights
+
+Store download logs in DB
+
+Display charts (React + Recharts or Chart.js)
+
+Dashboard for usage metrics and Celery task stats
+| Area             | Skill Developed                                    |
+| ---------------- | -------------------------------------------------- |
+| Backend          | Django REST API design + Celery async processing   |
+| Frontend         | React (Vite + Tailwind), API integration           |
+| DevOps           | Render / Vercel CI pipeline setup                  |
+| Team             | GitHub branching, PR workflow, review discipline   |
+| Product Thinking | Designing features from architecture to deployment |
+
+🛡️ Legal & Ethical Note
+
+This project is purely for educational & internal training at Syncora X.
+All members must comply with YouTube Terms of Service and local copyright laws.
+Do not distribute or use this for downloading copyrighted media.
+
+🤝 Contributing Guidelines (for Syncora X Team)
+
+Fork → Branch (feature/<yourname>)
+
+Commit descriptive messages
+
+Push & open a Pull Request
+
+Request review from mentors
+
+Merge only after approval
+
+🧭 Roadmap Summary
+Quarter	Milestone
+Q4 2025	UI upgrade + Download history
+Q1 2026	Auth + S3 integration
+Q2 2026	Dashboard + Analytics
+Q3 2026	Mobile-first PWA interface
+🪄 Maintainers
+
+Syncora X Engineering Team
+Lead Mentor: Ashan Mir
+Junior Developers: Batch 2025 – Full Stack Interns
+
+📧 Contact → support@syncora-x.com
+
+🌐 Website → https://syncora-x.com
+
+📜 License
+
+© 2025 Syncora X. All Rights Reserved.
+This repository is for internal learning and demonstration under the Syncora X Open Training License (educational use only).

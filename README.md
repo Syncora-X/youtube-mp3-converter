@@ -22,20 +22,18 @@ Lets users instantly download from browser
 Stores download logs for analytics
 
 # 🏗️ System Architecture
-┌────────────────────────┐
-│ 🎨 React (Vite) UI    │ → Handles user input & progress
-│ ⚡ Tailwind + Axios    │
-└──────────┬─────────────┘
-           │ REST API
-┌──────────▼─────────────┐
-│ 🧠 Django + DRF Backend│ → Validates, triggers Celery task
-│ ⚙️ Celery Worker + Redis│ → Runs yt-dlp + ffmpeg
-└──────────┬─────────────┘
-           │
-      Stores Output
-           │
-    ┌──────▼──────┐
-    │ 💾 Media/S3 │ → Serves MP3 file via secure link
+| **Component**                | **Technology / Tool**                              | **Description**                                                | **Responsibility**                                                 |
+| ---------------------------- | -------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 🎯 **Frontend (UI)**         | **Flask (Jinja2 Templates) + HTML + Tailwind CSS** | Lightweight frontend interface integrated with Flask templates | Displays YouTube input form, download status, and result           |
+| ⚙️ **Backend Logic**         | **Python (Flask)**                                 | Core logic layer handling requests and responses               | Processes YouTube URL, triggers audio download, and returns status |
+| 🧠 **Downloader Engine**     | **yt-dlp**                                         | High-performance YouTube downloader library                    | Extracts metadata and downloads MP3/audio from YouTube videos      |
+| 💾 **File Handling**         | **OS + Pathlib + Temporary Storage**               | Manages downloaded MP3 files and cleanup                       | Ensures proper file saving and cleanup after download              |
+| ☁️ **Hosting (Backend)**     | **Render**                                         | Cloud platform for Flask-based Python apps                     | Hosts backend securely with automatic deploys from GitHub          |
+| 🌐 **Frontend Deployment**   | **Vercel**                                         | High-performance static frontend hosting                       | Optional if UI is later separated into a React-based interface     |
+| 🔒 **Version Control**       | **Git + GitHub (Syncora-X Org)**                   | Tracks source code changes and manages contributions           | Ensures teamwork, commit tracking, and pull request workflow       |
+| 🧩 **Dependency Management** | **requirements.txt + pip**                         | Handles Python library installation                            | Keeps environment consistent across all developers                 |
+| 🧑‍💻 **Team Workflow**      | **Syncora X Junior Members**                       | Guided by mentors and senior developers                        | Learn Flask, Python, Git, and deployment through real practice     |
+
     └─────────────┘
 
 # 🧠 Skill Targets

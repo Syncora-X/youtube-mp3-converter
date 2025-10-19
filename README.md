@@ -95,7 +95,7 @@ source venv/bin/activate
 Then install dependencies:
 pip install -r requirements.txt
 
-2️⃣ Create Environment Variables
+### 2️⃣ Create Environment Variables
 
 Create a .env file inside /backend:
 
@@ -106,14 +106,14 @@ REDIS_URL=redis://127.0.0.1:6379/0
 ALLOWED_HOSTS=localhost,127.0.0.1
 
 
-3️⃣ Run Redis
+### 3️⃣ Run Redis
 docker run -d -p 6379:6379 redis
 
-4️⃣ Start Celery & Django Server
+### 4️⃣ Start Celery & Django Server
 celery -A youtube_mp3_backend.celery worker --loglevel=info --pool=solo
 python manage.py runserver
 
-5️⃣ Run Frontend
+### 5️⃣ Run Frontend
 cd ../frontend
 npm install
 VITE_API_URL=http://127.0.0.1:8000/api npm run dev

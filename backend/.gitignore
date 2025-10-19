@@ -1,0 +1,92 @@
+# =====================================
+# 🧠 Global ignores
+# =====================================
+__pycache__/
+*.py[cod]
+*.log
+*.pot
+*.pyc
+*.sqlite3
+*.db
+*.env
+.env*
+.DS_Store
+Thumbs.db
+
+# =====================================
+# 🐍 Python / Django
+# =====================================
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Django stuff
+staticfiles/
+media/
+downloads/
+*.mo
+*.pot
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+.cache/
+pytest_cache/
+
+# Migrations (optional, can keep if needed)
+# */migrations/
+# !*/migrations/__init__.py
+
+# =====================================
+# ⚙️ Celery / Redis / Async
+# =====================================
+celerybeat-schedule
+celerybeat.pid
+
+# =====================================
+# ⚛️ Node / React (Vite)
+# =====================================
+# dependencies
+frontend/node_modules/
+
+# production build
+frontend/dist/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+vite.config.ts.timestamp-*
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =====================================
+# 🪣 OS generated files
+# =====================================
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# =====================================
+# 🚀 GitHub / Deployment
+# =====================================
+# Local config files
+*.local
+*.secret
+*.backup
+
+# =====================================
+# ✅ End of .gitignore
+# =====================================
